@@ -2,7 +2,7 @@
 (ql:quickload 'cl-markup)
 (ql:quickload 'parenscript)
 (ql:quickload 'clobber)
-(ql:quickload 'split-sequence)
+(ql:quickload 'cl-ppcre)
 
 (defpackage #:herrblog.asdf
   (:use #:cl #:asdf))
@@ -13,7 +13,7 @@
         :cl-markup
         :parenscript
         :clobber
-        :split-sequence)
+        :cl-ppcre)
   (:export :standard-menu))
 
 (in-package #:herrblog.asdf)
@@ -28,6 +28,7 @@
   :components ((:file "settings")
                (:file "generic-functions")
                (:file "common-classes")
+               (:file "parser")
                (:file "posts-container")
                (:file "post")
                (:file "global-definitions")

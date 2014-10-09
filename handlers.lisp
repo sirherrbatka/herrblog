@@ -27,6 +27,6 @@
 (define-easy-handler (new-post-added :uri "/post-added") (title content)
   (execute 't-make-and-add-post
            title
-           (read-from-string content)
+           content
            (get-universal-time))
   (redirect "/blog"))

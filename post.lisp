@@ -24,10 +24,10 @@
 
 
 (defmethod to-html ((p post))
-  (apply 'markup* (list (list :h2 (slot-value p
+  (apply 'markup* (cons (list :h2 (slot-value p
                                               'm-title))
-                        (slot-value p
-                                    'm-content))))
+                        (get-markup-from-blog-string (slot-value p
+                                                                 'm-content)))))
 
 
 (defmethod add-post ((blog posts-container)
@@ -82,7 +82,7 @@
 
 (defun make-post (title html-content time)
   (declare (type string title)
-           (type list html-content)) ;;temporary
+           (type string html-content)) ;;temporary
   (make-instance 'post
                  :title title
                  :tags-list nil
