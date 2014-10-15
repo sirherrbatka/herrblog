@@ -77,24 +77,24 @@
 
 (defmethod created-befor ((a object-with-creation-timestamp)
                           (b object-with-creation-timestamp))
-  (>= (slot-value a 'm-creation-timestamp)
+  (> (slot-value a 'm-creation-timestamp)
      (slot-value b 'm-creation-timestamp)))
 
 
 (defmethod edited-before ((a object-with-timestamp)
                           (b object-with-timestamp))
-  (>= (slot-value a 'm-timestamp)
+  (> (slot-value a 'm-timestamp)
      (slot-value b 'm-timestamp)))
 
 
 (defmethod edited-before ((a list)
                           (b list))
-  (>= (apply 'max (mapcar (lambda (x) (slot-value x
+  (> (apply 'max (mapcar (lambda (x) (slot-value x
                                                   'm-timestamp))
                           a))
-      (apply 'max (mapcar (lambda (x) (slot-value x
-                                                  'm-timestamp))
-                          b))))
+     (apply 'max (mapcar (lambda (x) (slot-value x
+                                                 'm-timestamp))
+                         b))))
 
 
 (defmethod edited-before ((a list)
@@ -105,8 +105,8 @@
 
 (defmethod edited-before ((a list)
                           (b object-with-timestamp))
-  (>= (apply 'max (mapcar (lambda (x) (slot-value x 'm-timestamp)) a))
-      (slot-value b 'm-timestamp)))
+  (> (apply 'max (mapcar (lambda (x) (slot-value x 'm-timestamp)) a))
+     (slot-value b 'm-timestamp)))
 
 
 (defmethod edited-before ((a null)
