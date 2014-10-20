@@ -3,11 +3,15 @@
 
 (defun standard-menu (&rest body)
   (append (list :ui :role "navigation" :id "menu")
-          (mapcar (lambda (x) (list :li
-                                    (list :a
-                                          :href (car x)
-                                          (cadr x))))
+          (mapcar (lambda (x) (cond ((eq x 'line) (list :hr))
+                                    ((eq x 'no-line) nil)
+                                    (t
+                                     (list :li
+                                           (list :a
+                                                 :href (car x)
+                                                 (cadr x))))))
                   body)))
+
 
 (let ((default-menu (list (list "blog"
                                 "Main Page")
@@ -15,9 +19,9 @@
                                 "All Posts"))))
 
   (defun get-menu (&rest other)
-    (stringify (markup* (apply 'standard-menu default-menu))
-               (if (null other) "" "<hr></hr>")
-               (markup* (apply 'standard-menu other)))))
+    (markup* (apply 'standard-menu (append default-menu
+                                           (list (if (null other) 'no-line 'line))
+                                           other)))))
 
 
 (defmacro standard-page (style menu title &body body)

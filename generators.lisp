@@ -25,7 +25,7 @@
     (make-instance 'cached-page
                    :html (standard-page
                              (get-style)
-                             (get-menu)
+                             (get-menu (list "" "Categories"))
                              "Main Page"
                            (generate-posts-html (get-most-recent-posts
                                                  blog
