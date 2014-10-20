@@ -1,13 +1,32 @@
 (in-package :blog)
 
 
-(defclass posts-container (object-with-timestamp object-with-pages-cache)
+(defclass posts-container (object-with-timestamp
+                           object-with-pages-cache)
   ((m-posts
-    :initarg :posts)
+    :initform (make-hash-table :test 'equal))
    (m-post-ids
-    :initarg :post-ids)
+    :initform nil)
    (m-post-count
     :initform 0)))
+
+
+(defclass posts-category (posts-container)
+  ((m-category-name
+    :initarg :category-name)))
+
+
+(defclass main-container (posts-container)
+  ((m-categories
+    :initform (make-hash-table :test 'equal))))
+
+
+(defmethod new-category ((id string) (blog main-container))
+  (multiple-value-bind (category found) (gethash id (slot-value blog 'm-categories))
+    (if found
+        (error "Category already exists!")
+        (setf (gethash id (slot-value blog 'm-categories))
+              (make-instance 'posts-category :category-name id)))))
 
 
 (defmethod get-post ((blog posts-container) (id string))

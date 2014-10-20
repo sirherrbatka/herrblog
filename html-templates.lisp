@@ -15,8 +15,9 @@
                                 "All Posts"))))
 
   (defun get-menu (&rest other)
-    (markup* (apply 'standard-menu (append default-menu
-                                           other)))))
+    (stringify (markup* (apply 'standard-menu default-menu))
+               (if (null other) "" "<hr></hr>")
+               (markup* (apply 'standard-menu other)))))
 
 
 (defmacro standard-page (style menu title &body body)

@@ -1,13 +1,10 @@
 (in-package :blog)
 
 (defun make-blog ()
-  (make-instance 'posts-container
-                              :posts (make-hash-table :test 'equal)
-                              :post-ids (make-list 0)
+  (make-instance 'main-container
                               :generators (list (list 'main
                                                       'generate-main-page
-                                                      (lambda (x) (let ((posts (get-most-recent-posts x
-                                                                                                      *posts-on-main-page*)))
+                                                      (lambda (x) (let ((posts (get-most-recent-posts x *posts-on-main-page*)))
                                                                     (if (endp posts)
                                                                         (make-instance 'dummy-timestamp)
                                                                         posts))))
