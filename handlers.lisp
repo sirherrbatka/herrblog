@@ -11,9 +11,12 @@
   (page-handler 'main *blog*))
 
 
+(define-easy-handler (categories-page :uri "/categories") ()
+  (page-handler 'categories *blog*))
+
+
 (define-easy-handler (blog-page :uri "/entry") (title)
-  (page-handler 'this (get-post *blog*
-                                title)))
+  (page-handler 'categories *blog*))
 
 
 (define-easy-handler (posts-page :uri "/posts") ()

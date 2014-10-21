@@ -25,7 +25,7 @@
     (make-instance 'cached-page
                    :html (standard-page
                              (get-style)
-                             (get-menu (list "" "Categories"))
+                             (get-menu (list "categories" "Categories"))
                              "Main Page"
                            (generate-posts-html (get-most-recent-posts
                                                  blog
@@ -64,3 +64,23 @@
                          (:textarea :name "content" :cols 80 :rows 20)
                          (:/textarea))
                      (:p (:input :type "submit" :value "Add" :class "btn"))))))
+
+
+(defun hash-keys (hash-table)
+  (loop for key being the hash-keys of hash-table collect key))
+
+
+(defmethod generate-categories-page ((blog posts-container))
+  (make-instance 'cached-page
+                 :html (standard-page
+                           (get-style :columns-for-main t)
+                           (get-menu)
+                           "Categories"
+                         (apply 'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
+                                                                                                         "category?title=~a"
+                                                                                                         x))
+                                                                              (slot-value x
+                                                                                          'm-title))))
+
+                                                   (hash-keys (slot-value blog
+                                                                          'm-categories)))))))
