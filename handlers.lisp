@@ -16,7 +16,8 @@
 
 
 (define-easy-handler (blog-page :uri "/entry") (title)
-  (page-handler 'categories *blog*))
+  (page-handler 'this (get-post *blog*
+                                title)))
 
 
 (define-easy-handler (posts-page :uri "/posts") ()
