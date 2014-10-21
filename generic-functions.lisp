@@ -15,3 +15,4 @@
 (defgeneric get-most-recent-posts (blog count))
 (defgeneric new-category (id blog))
 (defgeneric generate-categories-page (blog))
+(defgeneric get-categor (blog id))

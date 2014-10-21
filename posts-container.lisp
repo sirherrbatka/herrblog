@@ -26,7 +26,21 @@
     (if found
         (error "Category already exists!")
         (setf (gethash id (slot-value blog 'm-categories))
-              (make-instance 'posts-category :category-name id)))))
+              (make-instance 'posts-category
+                             :category-name id
+                             :generator (list (list 'posts
+                                                    'generate-posts-page
+                                                    (lambda (x) x))))))))
+
+
+(defmethod get-post ((blog posts-container) (id string))
+  (let ((out (gethash id
+                      (slot-value blog
+                                  'm-categories))))
+
+    (if (null out)
+        (error "No category with such id: ~S" id)
+        out)))
 
 
 (defmethod get-post ((blog posts-container) (id string))

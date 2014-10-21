@@ -20,6 +20,11 @@
                                 title)))
 
 
+(define-easy-handler (blog-page :uri "/category") (title)
+  (page-handler 'posts (get-category *blog*
+                                     title)))
+
+
 (define-easy-handler (posts-page :uri "/posts") ()
   (page-handler 'posts *blog*))
 
