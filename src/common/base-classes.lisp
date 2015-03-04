@@ -3,29 +3,45 @@
 
 (defclass object-with-timestamp ()
   ((m-timestamp
-    :initform (get-universal-time))))
+    :initform (get-universal-time)
+    :accessor access-timestamp))
+  :documentation "timestamp is supposed to be updated after data modification")
 
 
 (defclass object-with-creation-timestamp ()
   ((m-creation-timestamp
-     :initarg :creation-timestamp)))
+    :accessor access-creation-timestamp
+    :initarg :creation-timestamp)))
 
 
 (defclass dummy-timestamp ()
   ())
 
 
-(defclass object-with-pages-cache ()
-  ((m-cache-with-generators)))
+(defclass cached-page (object-with-timestamp)
+    ((m-cached-html
+      :initarg :cached-html
+      :type string
+      :reader get-cached-html))
+  :documentation "Holds cached html as string inside the m-cached-html.")
 
 
-(defclass page-composite ()
-  ((m-generator
-    :initarg :generator)
-   (m-cached-page
-    :initform nil)
-   (m-selector
-    :initarg :selector)))
+(defun make-cached-page (html)
+  (declare (type string html))
+  (make-instance 'cached-page :cached-html html))
+
+
+(defmethod set-cached-html ((page cached-page) value)
+  (setf (slot-value page 'm-cached-html) value
+        (access-timestamp page) (get-universal-time))
+  page)
+
+
+(defclass object-with-pages-cache (object-with-timestamp)
+  ((m-cached-page-index
+    :initarg :cached-page-index
+    :accessor access-cached-page-index))
+  :documentation "Holds symbol to identiy cached html inside the cached generator instance.")
 
 
 (defmethod initialize-instance ((s object-with-pages-cache) &key generators)
@@ -70,9 +86,7 @@
                       'm-cached-page)))))
 
 
-(defclass cached-page (object-with-timestamp)
-  ((m-html
-    :initarg :html)))
+
 
 
 (defmethod created-befor ((a object-with-creation-timestamp)
@@ -86,26 +100,23 @@
   (> (slot-value a 'm-timestamp)
      (slot-value b 'm-timestamp)))
 
-
 (defmethod edited-before ((a list)
                           (b list))
-  (> (apply 'max (mapcar (lambda (x) (slot-value x
-                                                  'm-timestamp))
+  (> (apply #'max (mapcar (lambda (x) (slot-value x 'm-timestamp))
                           a))
-     (apply 'max (mapcar (lambda (x) (slot-value x
-                                                 'm-timestamp))
+     (apply #'max (mapcar (lambda (x) (slot-value x 'm-timestamp))
                          b))))
 
 
 (defmethod edited-before ((a list)
                           (b object-with-timestamp))
-  (>= (apply 'max (mapcar (lambda (x) (slot-value x 'm-timestamp)) a))
+  (>= (apply #'max (mapcar (lambda (x) (slot-value x 'm-timestamp)) a))
       (slot-value b 'm-timestamp)))
 
 
 (defmethod edited-before ((a list)
                           (b object-with-timestamp))
-  (> (apply 'max (mapcar (lambda (x) (slot-value x 'm-timestamp)) a))
+  (> (apply #'max (mapcar (lambda (x) (slot-value x 'm-timestamp)) a))
      (slot-value b 'm-timestamp)))
 
 

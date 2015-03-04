@@ -1,32 +1,41 @@
 (in-package :blog)
 
-
-(defclass post (object-with-pages-cache
-                object-with-creation-timestamp
-                object-with-timestamp)
+(defclass post (object-with-creation-timestamp
+                object-with-pages-cache)
   ((m-content
-    :initarg :content) ;;for generating the html
+    :initarg :content
+    :accessor access-content
+    :type list) ;;for generating the html
    (m-title
-    :initarg :title) ;;any string
+    :initarg :title
+    :accessor access-title) ;;any string
    (m-id
-    :initarg :id) ;;url string, created from the title
+    :initarg :id
+    :) ;;url string, created from the title
    (m-comments
     :initform nil)
    (m-tags-list ;;AKA categories
+    :accessor access-tags-list
+    :type list
     :initarg :tags-list)))
 
 
 (defclass post-comment (object-with-timestamp
                         object-with-creation-timestamp)
   ((m-content
-    :initarg :content)
+    :initarg :content
+    :accessor access-content
+    :type string)
    (m-author
-    :initarg :author)))
+    :initarg :author
+    :accessor access-author
+    :type string))
+  :documentation "Post comment. Just a string with the content and the author.")
 
 
 (defmethod to-html ((p post))
-  (apply 'markup* (cons (list :h2 (slot-value p 'm-title))
-                        (get-markup-from-blog-string (slot-value p 'm-content)))))
+  (apply 'markup* (cons (list :h2 (access-title p))
+                        (get-markup-from-blog-string (access-content p)))))
 
 
 (defmethod add-post ((blog main-container)
@@ -132,12 +141,11 @@
 (defun make-post (title html-content time &optional (tags nil))
   (declare (type string title html-content)
            (type list tags)) ;;temporary
-  (make-instance 'post
-                 :title title
-                 :tags-list tags
-                 :id (id-from-title title)
-                 :creation-timestamp time
-                 :content html-content
-                 :generators (list (list 'this
-                                         'generate-post-page
-                                         (lambda (x) x)))))
+  (let ((id (id-from-title title)))
+    (make-instance 'post
+                   :title title
+                   :tags-list tags
+                   :id id
+                   :cached-page-index id
+                   :creation-timestamp time
+                   :content html-content)))

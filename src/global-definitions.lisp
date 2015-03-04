@@ -1,5 +1,6 @@
 (in-package :blog)
 
+
 (defun make-blog ()
   (make-instance 'main-container
                  :generators (list (list 'main
@@ -15,7 +16,10 @@
                                          'generate-categories-page
                                          (lambda (x) x)))))
 
+
 (defvar *blog* (make-blog))
+(defvar *username* "shka")
+(defvar *password* "allcatsaregray")
 
 
 (defun reset ()
@@ -31,10 +35,9 @@
 (let ((acceptor nil))
   (defun start-server (path)
     (setf *transaction-log*
-          (open-transaction-log
-           path
-           (lambda (tra) (apply (car tra)
-                                (cdr tra)))))
+          (open-transaction-log path
+                                (lambda (tra) (apply (car tra)
+                                                     (cdr tra)))))
     (start (if (null acceptor)
                (setf acceptor (make-instance 'easy-acceptor
                                              :port 8080))

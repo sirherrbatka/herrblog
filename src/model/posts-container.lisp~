@@ -1,8 +1,7 @@
 (in-package :blog)
 
 
-(defclass posts-container (object-with-timestamp
-                           object-with-pages-cache)
+(defclass posts-container-impl ()
   ((m-posts
     :initform (make-hash-table :test 'equal))
    (m-post-ids
@@ -10,18 +9,20 @@
    (m-post-count
     :initform 0)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass posts-category (posts-container)
+(defclass posts-category (object-with-pages-cache posts-container-impl)
   ((m-category-name
     :initarg :category-name)))
 
 
-(defclass main-container (posts-container)
+(defclass main-container (object-with-pages-cache posts-container-impl)
   ((m-categories
     :initform (make-hash-table :test 'equal))))
 
 
-(defmethod new-category ((id string) (blog main-container))
+(defmethod new-category ((id string)
+                         (blog main-container))
   (multiple-value-bind (category found) (gethash id (slot-value blog 'm-categories))
     (if found
         (error "Category already exists!")
@@ -33,29 +34,31 @@
                                                     (lambda (x) x))))))))
 
 
-(defmethod get-post ((blog posts-container) (id string))
+(define-condition no-such-page (error) ())
+
+
+(defmethod get-category ((blog posts-container-impl) (id string))
   (let ((out (gethash id
                       (slot-value blog
                                   'm-categories))))
 
     (if (null out)
-        (error "No category with such id: ~S" id)
+        (error 'no-such-page "No category with such id: ~S" id)
         out)))
 
 
-(defmethod get-post ((blog posts-container) (id string))
+(defmethod get-post ((blog posts-container-impl) (id string))
   (let ((out (gethash id
                       (slot-value blog
                                   'm-posts))))
 
     (if (null out)
-        (error "No post with such id: ~S" id)
+        (error 'no-such-page "No post with such id: ~S" id)
         out)))
 
 
-(defmethod get-most-recent-posts ((blog posts-container) (count integer))
-  (mapcar (lambda (id) (get-post blog
-                                 id))
+(defmethod get-most-recent-posts ((blog posts-container-impl) (count integer))
+  (mapcar (lambda (id) (get-post blog id))
           (subseq (slot-value blog
                               'm-post-ids)
                   0
@@ -64,9 +67,8 @@
                                    'm-post-count)))))
 
 
-(defmethod sort-content ((container posts-container))
-  (with-slots ((post-ids m-post-ids)
-               (posts m-posts))
+(defmethod sort-content ((container posts-container-impl))
+  (with-slots ((post-ids m-post-ids) (posts m-posts))
       container
 
     (setf post-ids (sort post-ids

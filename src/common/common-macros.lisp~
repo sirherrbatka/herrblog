@@ -1,0 +1,27 @@
+(in-package :blog)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmacro define-class-with-initializer (class-name
+                                         direct-superclasses
+                                         direct-slots
+                                         options
+                                         initializer-name
+                                         initialization-method)
+  (let* ((slots-to-initialize (remove-if-not (lambda (x) (null (find :initarg x)))
+                                             direct-slots))
+         (slots-list (mapcar #'car slots-to-initialize))
+         (object-sym (gensym))
+         (init-sym (gensym)))
+
+    `(defclass ,class-name ,direct-superclasses ,direct-slots ,options)
+    `(defclass ,initializer-name () ,slots-to-initialize)
+    `(defgeneric ,initialize-method (object initializator))
+    `(defmethod ,initialize-instance ((,object-sym ,class-name) (,init-sym ,initializer-name))
+       `(setf ,@(reduce 'append (mapcar 'list
+                                        (mapcar 'append
+                                                `(slot-value ,object-sym)
+                                                slots-list)
+                                        (mapcar 'append
+                                                `(slot-value ,init-sym)
+                                                slots-list)))))))

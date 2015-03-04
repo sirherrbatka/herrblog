@@ -2,6 +2,20 @@
 
 
 (defvar *markup-definitions* (make-hash-table :test 'equal))
+(defvar *external-level-symbols* #(:P :End))
+(defvar *internal-level-symbols* #(:list-element-termination))
+
+(defmacro define-symbol-category (symbols-sequence typename predictate)
+  (let ((argument (gensym)))
+        `(defun ,typename (,argument)
+           (declare (type symbol ,argument))
+           (not (null (find ,argument ,symbols-sequence))))
+        `(deftype ,typename ()
+           '(satisfies ,typename))))
+
+
+(define-symbol-category *external-level-symbols* external-level-symbol external-level-symbolp)
+(define-symbol-category *internal-level-symbols* internal-level-symbol internal-level-symbolp)
 
 
 (defun add-to-definitions (key value)
@@ -16,7 +30,8 @@
 (defun group (lst)
   (declare (type list lst))
   (labels ((find-end (list)
-             (if (eq :End (car list))
+             (if (or (eq :End (car list))
+                     (endp (car list)))
                  (cdr list)
                  (find-end (cdr list))))
 
@@ -42,8 +57,7 @@
 (defun to-markup-list (lst)
   (declare (type list lst))
   (nreverse (reduce (lambda (prev next)
-                      (cond ((some 'symbolp
-                                   (list (car prev) next))
+                      (cond ((some 'symbolp (list (car prev) next))
                              (cons next prev))
 
                             ((stringp (car prev))
@@ -53,8 +67,7 @@
                                    (cdr prev)))))
 
                     (mapcar (lambda (x)
-                              (let ((tag (gethash x
-                                                  *markup-definitions*)))
+                              (let ((tag (gethash x *markup-definitions*)))
                                 (if (null tag)
                                     x
                                     tag)))
@@ -64,5 +77,4 @@
 
 (defun get-markup-from-blog-string (str)
   (declare (type string str))
-  (group (to-markup-list (split "\\s+"
-                                str))))
+  (group (to-markup-list (split "\\s+" str))))

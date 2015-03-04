@@ -9,19 +9,10 @@
                        time)))
 
 
-(defun t-remove-post (sym)
-  (declare (type symbol sym))
-  (with-slots ((post-ids m-post-ids)
-               (post-count m-post-count)
-               (posts m-posts))
-      *blog*
-    (remhash sym
-             posts)
-    (decf post-count 1)
-    (setf post-ids
-          (delete sym
-                  post-ids
-                  :test #'eq))))
+(defun t-remove-post (id)
+  (declare (type string id))
+  (remove-post *blog*
+               id))
 
 
 (defun t-add-comment (entry author content time)

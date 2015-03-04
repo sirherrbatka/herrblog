@@ -15,12 +15,12 @@
   (page-handler 'categories *blog*))
 
 
-(define-easy-handler (blog-page :uri "/entry") (title)
+(define-easy-handler (blog-post :uri "/entry" :default-request-type :get) (title)
   (page-handler 'this (get-post *blog*
                                 title)))
 
 
-(define-easy-handler (blog-page :uri "/category") (title)
+(define-easy-handler (category-page :uri "/category") (title)
   (page-handler 'posts (get-category *blog*
                                      title)))
 
