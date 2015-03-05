@@ -10,14 +10,18 @@
     :initarg :title
     :accessor access-title) ;;any string
    (m-id
-    :initarg :id
-    :) ;;url string, created from the title
+    :initarg :id) ;;url string, created from the title
    (m-comments
     :initform nil)
    (m-tags-list ;;AKA categories
     :accessor access-tags-list
     :type list
     :initarg :tags-list)))
+
+
+(defmethod initialize-instance :after ((post post) &key)
+  (setf (access-cached-page-index post)
+        (slot-value post 'm-id)))
 
 
 (defclass post-comment (object-with-timestamp
@@ -29,8 +33,7 @@
    (m-author
     :initarg :author
     :accessor access-author
-    :type string))
-  :documentation "Post comment. Just a string with the content and the author.")
+    :type string)))
 
 
 (defmethod to-html ((p post))

@@ -4,8 +4,7 @@
 (defclass object-with-timestamp ()
   ((m-timestamp
     :initform (get-universal-time)
-    :accessor access-timestamp))
-  :documentation "timestamp is supposed to be updated after data modification")
+    :accessor access-timestamp)))
 
 
 (defclass object-with-creation-timestamp ()
@@ -22,8 +21,7 @@
     ((m-cached-html
       :initarg :cached-html
       :type string
-      :reader get-cached-html))
-  :documentation "Holds cached html as string inside the m-cached-html.")
+      :reader get-cached-html)))
 
 
 (defun make-cached-page (html)
@@ -36,58 +34,14 @@
         (access-timestamp page) (get-universal-time))
   page)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass object-with-pages-cache (object-with-timestamp)
   ((m-cached-page-index
-    :initarg :cached-page-index
-    :accessor access-cached-page-index))
-  :documentation "Holds symbol to identiy cached html inside the cached generator instance.")
+    :reader get-cached-page-index
+    :initform nil)))
 
-
-(defmethod initialize-instance ((s object-with-pages-cache) &key generators)
-  (with-slots ((table m-cache-with-generators))
-      s
-    (setf table
-          (make-hash-table))
-    (mapc (lambda (x) (setf (gethash (car x)
-                                     table)
-                            (make-instance 'page-composite
-                                           :generator (second x)
-                                           :selector (third x))))
-          generators))
-  (call-next-method))
-
-
-(defmethod get-page ((object object-with-pages-cache) (identifer symbol))
-  (with-slots ((table m-cache-with-generators))
-      object
-    (let ((composite (gethash identifer
-                              table)))
-
-      (when (null composite)
-        (error "Identifer is not known in this object"))
-
-      (if (or (null (slot-value composite
-                                'm-cached-page))
-              (edited-before (funcall (slot-value composite
-                                                  'm-selector)
-                                      object)
-                             (slot-value composite
-                                         'm-cached-page)))
-
-          (setf (slot-value composite
-                            'm-cached-page)
-                (funcall (slot-value composite
-                                     'm-generator)
-
-                         object))
-
-          (slot-value composite
-                      'm-cached-page)))))
-
-
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmethod created-befor ((a object-with-creation-timestamp)
                           (b object-with-creation-timestamp))
@@ -99,6 +53,7 @@
                           (b object-with-timestamp))
   (> (slot-value a 'm-timestamp)
      (slot-value b 'm-timestamp)))
+
 
 (defmethod edited-before ((a list)
                           (b list))

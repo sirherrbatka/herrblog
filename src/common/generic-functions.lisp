@@ -41,6 +41,7 @@
 (defgeneric new-category (id blog))
 (defgeneric get-category (blog id))
 (defgeneric get-style (generator)
-  :method-combination stringify)
+  (:method-combination stringify))
 (defgeneric set-cached-html (page value))
 (defgeneric reset-cache (object))
+(defgeneric get-menu (generator))

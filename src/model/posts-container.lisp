@@ -5,7 +5,8 @@
   ((m-posts
     :initform (make-hash-table :test 'equal))
    (m-post-ids
-    :initform nil)
+    :initform nil
+    :reader get-post-ids)
    (m-post-count
     :initform 0)))
 
@@ -16,10 +17,23 @@
     :initarg :category-name)))
 
 
+(defmethod initialize-instance :after ((c posts-category) &key)
+  (setf (slot-value c 'm-cached-page-index)
+        (slot-value c 'm-category-name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defclass main-container (posts-container)
   ((m-categories
-    :initform (make-hash-table :test 'equal))))
+    :initform (make-hash-table :test 'equal)
+    :accessor access-categories)))
 
+
+(defmethod initialize-instance :after ((m main-container) &key)
+  (setf (slot-value m 'm-cached-page-index)
+        'blog))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmethod new-category ((id string)
                          (blog main-container))
@@ -37,7 +51,7 @@
 (define-condition no-such-page (error) ())
 
 
-(defmethod get-category ((blog posts-container-impl) (id string))
+(defmethod get-category ((blog posts-container) (id string))
   (let ((out (gethash id
                       (slot-value blog
                                   'm-categories))))
@@ -47,7 +61,7 @@
         out)))
 
 
-(defmethod get-post ((blog posts-container-impl) (id string))
+(defmethod get-post ((blog posts-container) (id string))
   (let ((out (gethash id
                       (slot-value blog
                                   'm-posts))))
@@ -57,7 +71,7 @@
         out)))
 
 
-(defmethod get-most-recent-posts ((blog posts-container-impl) (count integer))
+(defmethod get-most-recent-posts ((blog posts-container) (count integer))
   (mapcar (lambda (id) (get-post blog id))
           (subseq (slot-value blog
                               'm-post-ids)
@@ -67,7 +81,7 @@
                                    'm-post-count)))))
 
 
-(defmethod sort-content ((container posts-container-impl))
+(defmethod sort-content ((container posts-container))
   (with-slots ((post-ids m-post-ids) (posts m-posts))
       container
 

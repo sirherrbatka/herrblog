@@ -13,17 +13,6 @@
                   body)))
 
 
-(let ((default-menu (list (list "blog"
-                                "Main Page")
-                          (list "posts"
-                                "All Posts"))))
-
-  (defun get-menu (&rest other)
-    (markup* (apply 'standard-menu (append default-menu
-                                           (list (if (null other) 'no-line 'line))
-                                           other)))))
-
-
 (defmacro standard-page (style menu title &body body)
   `(html5 (:head
            (:title ,title)

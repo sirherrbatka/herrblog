@@ -16,12 +16,12 @@
 
 (defmacro define-reseting-accessor (accessor slot)
   `(defmethod (setf ,accessor) :after (new-value (object caching-generator))
-              (unless (= (slot-value object ,slot) new-value)
+              (unless (equal (slot-value object (quote,slot)) new-value)
                 (reset-cache object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass styled-page-generator ()
+(define-class-with-initializer styled-page-generator ()
   ((m-style-html
     :type string
     :initarg :style-html
@@ -42,10 +42,6 @@
     :type string
     :initarg :style-h1
     :accessor access-style-h1)
-   (m-style-menu
-    :type string
-    :initarg :style-menu
-    :accessor access-style-menu)
    (m-style-article
     :type string
     :initarg :style-article
@@ -61,8 +57,23 @@
    (m-style-line
     :type string
     :initarg :style-line
-    :accessor access-style-line)))
+    :accessor access-style-line))
+  nil
+  init-styled-page-generator styled-page-generator)
 
+(bind-defun
+    init-default-styled-page-generator
+    init-styled-page-generator
+    (styled-page-generator)
+  *default-html*
+  *default-body*
+  *default-body-after*
+  *default-header*
+  *default-h1*
+  *default-article*
+  *default-article-footer*
+  *default-display*
+  *default-line*)
 
 (define-reseting-accessor access-style-html m-style-html)
 (define-reseting-accessor access-style-body m-style-body)
@@ -77,16 +88,61 @@
 
 
 (defmethod get-style stringify ((generator styled-page-generator))
-  (stringify (access-style-html object)
-             (access-style-body object)
-             (access-style-body-after object)
-             (access-style-header object)
-             (access-style-h1 object)
-             (access-style-menu object)
-             (access-style-article object)
-             (access-style-article-footer object)
-             (access-style-display object)
-             (access-style-line object)))
+  (stringify (access-style-html generator)
+             (access-style-body generator)
+             (access-style-body-after generator)
+             (access-style-header generator)
+             (access-style-h1 generator)
+             (access-style-menu generator)
+             (access-style-article generator)
+             (access-style-article-footer generator)
+             (access-style-display generator)
+             (access-style-line generator)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-class-with-initializer with-menu-page-generator ()
+  ((m-style-menu
+    :type string
+    :initarg :style-menu
+    :accessor access-style-menu)
+   (m-additional-menu-items
+    :type list
+    :initarg :additional-menu-items
+    :accessor access-additional-menu-items)
+   (m-main-menu-items
+    :type list
+    :initarg :main-menu-items
+    :accessor access-main-menu-items))
+  nil
+  init-with-menu-page-generator with-menu-page-generator)
+
+
+(bind-defun
+    init-default-with-menu-page-generator
+    init-with-menu-page-generator
+    (with-menu-page-generator)
+            *default-menu*
+            nil
+            *default-menu-items*)
+
+
+(define-reseting-accessor access-style-menu m-style-menu)
+(define-reseting-accessor access-additional-menu-items m-additional-menu-items)
+(define-reseting-accessor access-main-menu-items m-main-menu-items)
+
+
+(defmethod get-style stringify ((generator with-menu-page-generator))
+  (slot-value generator 'm-style-menu))
+
+
+(defmethod get-menu ((generator with-menu-page-generator))
+  (with-accessors ((m-additional-menu-items access-additional-menu-items)
+                   (m-main-menu-items access-main-menu-items)) generator
+    (markup* (apply #'standard-menu (append m-main-menu-items
+                                            (list (if (null m-additional-menu-items)
+                                                      'no-line 'line))
+                                            m-additional-menu-items)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -97,23 +153,25 @@
     :accessor access-style-main)))
 
 
-(defmethod get-style stringify ((generator simple-page-generator))
+(defmethod get-style stringify ((generator no-columns-page-generator))
   (access-style-main generator))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass columns-page-generator ()
+(define-class-with-initializer columns-page-generator ()
   ((m-columns-count
     :type (unsigned-byte 8)
     :initarg :columns-count
     :accessor access-columns-count)
    (m-style-columns-main
     :type string
-    :accessor access-style-columns-main)
+    :reader get-style-columns-main)
    (m-style-columns-main-template
     :type string
     :initform "main { width: 73%; padding: 1%; float: right; webkit-columns: $$; -moz-columns: $$; columns: $$; }"
-    :allocation :class)))
+    :allocation :class))
+  nil
+  init-columns-page-generator columns-page-generator)
 
 
 (define-reseting-accessor access-columns-count m-columns-count)
@@ -125,7 +183,8 @@
         )) ;;TODO generate new string by substituting the $$ for printed representation of the new-value
 
 
-(defmethod initialize-instance :after ((object columns-page-generator) &key columns-count)
+(defmethod initialize-instance :after ((object columns-page-generator) &key (columns-count 3))
+  (setf (slot-value object 'm-columns-count) columns-count)
   (update-style-columns-main object))
 
 
@@ -134,11 +193,21 @@
 
 
 (defmethod get-style stringify ((generator columns-page-generator))
-  (access-style-columns-main generator))
+  (get-style-columns-main generator))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass main-page-generator (caching-generator styled-page-generator no-columns-page-generator)
+(defclass common-generator (caching-generator styled-page-generator with-menu-page-generator)
+  ())
+
+
+(define-init-chain init-default-common-generator common-generator
+  init-default-styled-page-generator
+  init-default-with-menu-page-generator)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defclass main-page-generator (no-columns-page-generator common-generator)
   ((m-posts-on-main-page-count
     :type (unsigned-byte 8)
     :initarg :posts-on-main-page-count
@@ -149,17 +218,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass posts-list-generator (caching-generator columns-page-generator styled-page-generator)
+(defclass posts-list-generator (columns-page-generator common-generator)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass categories-list-generator (caching-generator columns-page-generator styled-page-generator)
+(defclass categories-list-generator (columns-page-generator common-generator)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass post-page-generator (caching-generator styled-page-generator no-columns-page-generator)
+(defclass post-page-generator (no-columns-page-generator common-generator)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -167,10 +236,10 @@
 (defmethod generate-page-from :start ((generator caching-generator)
                                       (object object-with-pages-cache))
   (with-accessors ((m-cached-html access-cached-html)) generator
-    (multiple-value-bind (cached founded) (gethash (access-cached-page-index object) access-cached-html)
+    (multiple-value-bind (cached founded) (gethash (get-cached-page-index object) m-cached-html)
       (get-cached-html (if (or (not founded)
                                (edited-before object cached))
-                           (setf (gethash (access-cached-page-index object) access-cached-html)
+                           (setf (gethash (get-cached-page-index object) m-cached-html)
                                  (make-cached-page (call-next-method)))
                            cached)))))
 
@@ -179,7 +248,7 @@
                                (object post))
   (standard-page
    (get-style generator)
-   (get-menu)
+   (get-menu generator)
    (access-title object)
    (to-html object)
    (markup* '(:hr))))
@@ -200,11 +269,11 @@
     (markup* (list :html
                    (standard-page
                     (get-style generator)
-                    (get-menu (list "categories" "Categories"))
+                    (get-menu generator)
                     "Main Page"
                     (generate-posts-html (get-most-recent-posts
                                           object
-                                          *posts-on-main-page*)))))))
+                                          (slot-value generator 'm-posts-on-main-page-count))))))))
 
 
 (defmethod generate-page-from ((generator posts-list-generator)
@@ -212,7 +281,7 @@
   (markup* (list :html
                  (standard-page
                   (get-style generator)
-                  (get-menu)
+                  (get-menu generator)
                   "Posts"
                   (reduce #'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
                                                                                                     "entry?title=~a"
@@ -222,7 +291,7 @@
                                                                                       'm-title))))
 
                                               (mapcar (lambda (x) (get-post object x))
-                                                       (slot-value object 'm-post-ids))))))))
+                                                       (get-post-ids object))))))))
 
 
 (defmethod generate-page-from ((generator categories-list-generator)
@@ -230,7 +299,7 @@
   (markup* (list :html
                  (standard-page
                   (get-style generator)
-                  (get-menu)
+                  (get-menu generator)
                   "Categories"
                   (reduce #'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
                                                                                                     "category?title=~a"
@@ -238,24 +307,7 @@
                                                                          (slot-value x
                                                                                      'm-title))))
 
-                                              (hash-keys (slot-value object
-                                                                     'm-categories))))))))
-
-
-(defun generate-new-post-page ()
-  (with-http-authentication
-      (standard-page
-          (get-style)
-          (get-menu)
-          "New Post"
-        (markup (:h2 "Add a new post")
-                (:form :action "/post-added" :method "post" :id "addform"
-                       (:p "Title" (:br)
-                           (:input :type "text" :name "title" :class "txt"))
-                       (:p "Content" (:br)
-                           (:textarea :name "content" :cols 80 :rows 20)
-                           (:/textarea))
-                       (:p (:input :type "submit" :value "Add" :class "btn")))))))
+                                              (hash-keys (access-categories object))))))))
 
 
 (defun hash-keys (hash-table)

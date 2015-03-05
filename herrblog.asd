@@ -31,7 +31,7 @@
                (:file "src/common/common-macros")
                (:file "src/common/base-classes")
                (:file "src/parser")
-               (:file "src/posts-container")
+               (:file "src/model/posts-container")
                (:file "src/model/post")
                (:file "src/global-definitions")
                (:file "src/html/templates")
