@@ -14,12 +14,12 @@
 
 
 (defmacro standard-page (style menu title &body body)
-  `(html5 (:head
-           (:title ,title)
-           (:meta :charset "utf-8")
-           (:style (raw ,style)))
-          (:body
-           (:header
-            (:h1 "some tytul"))
-           (raw ,menu)
-           (:main (raw ,@body)))))
+  `(html5 (:html5 (:head
+                   (:title ,title)
+                   (:meta :charset "utf-8")
+                   (:style (raw ,style)))
+                  (:body
+                   (:header
+                    (:h1 "some tytul"))
+                   (raw ,menu)
+                   (:main (raw ,@body))))))

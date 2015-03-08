@@ -35,23 +35,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod new-category ((id string)
-                         (blog main-container))
-  (multiple-value-bind (category found) (gethash id (slot-value blog 'm-categories))
-    (if found
-        (error "Category already exists!")
-        (setf (gethash id (slot-value blog 'm-categories))
-              (make-instance 'posts-category
-                             :category-name id
-                             :generator (list (list 'posts
-                                                    'generate-posts-page
-                                                    (lambda (x) x))))))))
+(defmethod new-category ((id string) (blog main-container))
+  (with-slots ((categories m-categories)) blog
+    (let ((found (nth-value 2 (gethash id categories))))
+      (if found
+          (error "Category already exists!")
+          (progn
+            (setf (gethash id categories)
+                  (make-instance 'posts-category
+                                 :category-name id))
+            (update-timestamp blog))))))
 
 
 (define-condition no-such-page (error) ())
 
 
-(defmethod get-category ((blog posts-container) (id string))
+(defmethod get-category ((blog posts-container) id)
+  (declare (type string id))
   (let ((out (gethash id
                       (slot-value blog
                                   'm-categories))))
@@ -61,7 +61,8 @@
         out)))
 
 
-(defmethod get-post ((blog posts-container) (id string))
+(defmethod get-post ((blog posts-container) id)
+  (declare (type string id))
   (let ((out (gethash id
                       (slot-value blog
                                   'm-posts))))
@@ -71,7 +72,8 @@
         out)))
 
 
-(defmethod get-most-recent-posts ((blog posts-container) (count integer))
+(defmethod get-most-recent-posts ((blog posts-container) count)
+  (declare (type integer count))
   (mapcar (lambda (id) (get-post blog id))
           (subseq (slot-value blog
                               'm-post-ids)

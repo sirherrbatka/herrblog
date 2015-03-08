@@ -45,3 +45,4 @@
 (defgeneric set-cached-html (page value))
 (defgeneric reset-cache (object))
 (defgeneric get-menu (generator))
+(defgeneric update-timestamp (object))

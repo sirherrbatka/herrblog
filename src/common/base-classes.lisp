@@ -7,6 +7,12 @@
     :accessor access-timestamp)))
 
 
+(defmethod update-timestamp ((object object-with-timestamp))
+  (setf (access-timestamp object)
+        (get-universal-time)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defclass object-with-creation-timestamp ()
   ((m-creation-timestamp
     :accessor access-creation-timestamp
