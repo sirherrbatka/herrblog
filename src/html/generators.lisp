@@ -16,7 +16,8 @@
 
 (defmacro define-reseting-accessor (accessor slot)
   `(defmethod (setf ,accessor) :before (new-value (object caching-generator))
-              (unless (equal (slot-value object (quote,slot)) new-value)
+              (when (and (boundp (slot-value object (quote ,slot)))
+                         (not (equal (slot-value object (quote ,slot)) new-value)))
                 (reset-cache object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -173,22 +174,27 @@
   nil
   init-columns-page-generator columns-page-generator)
 
+
 (define-reseting-accessor access-style-columns-main m-style-columns-main)
+
 
 (defun update-style-columns-main (generator)
   (declare (type columns-page-generator generator))
   (with-slots ((style-columns-main-template m-style-columns-main-template)
-               (columns-count m-columns-count)) generator
-      (setf (access-style-columns-main generator)
+               (columns-count m-columns-count)
+               (style-columns-main m-style-columns-main)) generator
+      (setf style-columns-main
             (regex-replace-all "\@"
                                style-columns-main-template
-                               (write-to-string columns-count)))))
+                               (write-to-string columns-count)))
+      (reset-cache generator)))
 
 
-(defmethod initialize-instance :after ((object columns-page-generator) &key (columns-count 3))
+(defmethod initialize-instance :around ((object columns-page-generator) &key (columns-count 3))
   (setf (slot-value object 'm-style-columns-main-template) "main { width: 73%; padding: 1%; float: right; webkit-columns: @; -moz-columns: @; columns: @; }"
         (slot-value object 'm-columns-count) columns-count)
-  (update-style-columns-main object))
+  (update-style-columns-main object)
+  (call-next-method))
 
 
 (defmethod (setf access-columns-count) :after (new-value (object columns-page-generator))
