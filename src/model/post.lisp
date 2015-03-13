@@ -8,8 +8,10 @@
     :type list) ;;for generating the html
    (m-title
     :initarg :title
+    :type string
     :accessor access-title) ;;any string
    (m-id
+    :type string
     :initarg :id) ;;url string, created from the title
    (m-comments
     :initform nil)

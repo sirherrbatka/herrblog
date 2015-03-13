@@ -233,9 +233,10 @@
   10)
 
 
-(defmethod initialize-instance :after ((object main-page-generator) &key)
+(defmethod initialize-instance :around ((object main-page-generator) &key)
   (setf (access-additional-menu-items object)
-        (list (list "categories" "Categories"))))
+        (list (list "categories" "Categories")))
+  (call-next-method))
 
 
 (define-init-chain init-default-whole-main-page-generator
