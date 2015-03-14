@@ -3,15 +3,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun key-in-hash (sym expansion-map)
-  (nth-value 1 (gethash sym expansion-map)))
+  (declare (type symbol sym)
+           (type hash-table expansion-map))
+  (the symbol (nth-value 1 (gethash sym expansion-map))))
 
 
 (defun expand (sym body map)
+  (declare (type symbol sym)
+           (type list body)
+           (type hash-table map))
   (let ((expander (gethash sym map)))
-    (the list (funcall expander body))))
+    (funcall expander body)))
 
 
 (defun expand-tree (tree expansion-map)
+  (declare (type list tree)
+           (type hash-table expansion-map))
   (labels ((worker (input ac)
              (let ((first (car input))
                    (rest (cdr input)))
