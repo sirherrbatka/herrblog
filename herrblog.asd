@@ -25,12 +25,12 @@
   :author "Marek Kochanowicz (aka shka)"
   :maintainer "Marek Kochanowicz (aka shka)"
   :serial T
-  :components ((:file "src/html/style")
+  :components ((:file "src/model/post-parser")
+               (:file "src/html/style")
                (:file "src/authentication")
                (:file "src/common/generic-functions")
                (:file "src/common/common-macros")
                (:file "src/common/base-classes")
-               (:file "src/parser")
                (:file "src/model/posts-container")
                (:file "src/model/post")
                (:file "src/global-definitions")

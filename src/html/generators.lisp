@@ -234,7 +234,7 @@
 
 
 (defmethod initialize-instance :around ((object main-page-generator) &key)
-  (setf (access-additional-menu-items object)
+  (setf (slot-value object 'm-additional-menu-items)
         (list (list "categories" "Categories")))
   (call-next-method))
 
@@ -268,19 +268,32 @@
   categories-list-generator)
 
 
-(define-init-chain init-default-whole-categories-list-generator categories-list-generator
+(define-init-chain init-default-whole-categories-list-generator
+    categories-list-generator
     init-default-common-generator)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-class-with-initializer post-page-generator (no-columns-page-generator common-generator)
-  ()
+  ((m-expanding-map
+    :type list
+    :accessor access-expanding-map))
   nil
   init-post-page-generator
   post-page-generator)
 
 
+(define-reseting-accessor access-expanding-map m-expanding-map)
+
+
+(bind-defun init-default-post-page-generator
+            init-post-page-generator
+            (post-page-generator)
+            *default-expansion-map*)
+
+
 (define-init-chain init-default-whole-post-page-generator post-page-generator
+  init-default-post-page-generator
   init-default-common-generator)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -302,7 +315,7 @@
    (get-style generator)
    (get-menu generator)
    (access-title object)
-   (to-html object)
+   (to-html object (access-expanding-map generator))
    (markup* '(:hr))))
 
 

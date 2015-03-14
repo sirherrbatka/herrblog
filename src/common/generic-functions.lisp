@@ -29,7 +29,7 @@
 
 (defgeneric generate-page-from (generator object)
   (:method-combination with-start))
-(defgeneric to-html (p))
+(defgeneric to-html (p rules))
 (defgeneric edited-before (a b))
 (defgeneric created-before (a b))
 (defgeneric add-post (blog-main new-entry))

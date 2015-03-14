@@ -38,9 +38,10 @@
     :type string)))
 
 
-(defmethod to-html ((p post))
+(defmethod to-html ((p post) (rules hash-table))
   (apply 'markup* (cons (list :h2 (access-title p))
-                        (get-markup-from-blog-string (access-content p)))))
+                        (expand-tree (access-content p)
+                                     rules))))
 
 
 (defmethod add-post ((blog main-container)
