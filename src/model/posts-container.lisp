@@ -35,7 +35,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod new-category ((id string) (blog main-container))
+(defmethod new-category ((id string)
+                         (blog main-container))
   (with-slots ((categories m-categories)) blog
     (let ((found (nth-value 2 (gethash id categories))))
       (if found
