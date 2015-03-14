@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar *default-main-page-generator* (init-default-whole-main-page-generator (make-instance 'main-page-generator)))
-(defvar *default-categories-list-generator* (init-default-whole-categories-generator (make-instance 'categories-list-generator)))
+(defvar *default-categories-list-generator* (init-default-whole-categories-list-generator (make-instance 'categories-list-generator)))
 (defvar *default-posts-list-generator* (init-default-whole-posts-list-generator (make-instance 'posts-list-generator)))
 (defvar *default-post-generator* (init-default-whole-post-page-generator (make-instance 'post-page-generator)))
 
