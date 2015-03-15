@@ -1,5 +1,6 @@
 (in-package :blog)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass posts-container (object-with-pages-cache)
   ((m-posts
@@ -48,9 +49,6 @@
             (update-timestamp blog))))))
 
 
-(define-condition no-such-page (error) ())
-
-
 (defmethod get-category ((blog posts-container) id)
   (declare (type string id))
   (let ((out (gethash id
@@ -58,7 +56,7 @@
                                   'm-categories))))
 
     (if (null out)
-        (error 'no-such-page "No category with such id: ~S" id)
+        (error 'page-not-found "No category with such id: ~S" id)
         out)))
 
 
@@ -69,7 +67,7 @@
                                   'm-posts))))
 
     (if (null out)
-        (error 'no-such-page "No post with such id: ~S" id)
+        (error 'page-not-found "No post with such id: ~S" id)
         out)))
 
 

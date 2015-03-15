@@ -1,6 +1,5 @@
 (ql:quickload 'hunchentoot)
 (ql:quickload 'cl-markup)
-(ql:quickload 'parenscript)
 (ql:quickload 'clobber)
 (ql:quickload 'cl-ppcre)
 
@@ -11,7 +10,6 @@
   (:use :common-lisp
         :hunchentoot
         :cl-markup
-        :parenscript
         :clobber
         :cl-ppcre)
   (:export :standard-menu))
@@ -25,10 +23,10 @@
   :author "Marek Kochanowicz (aka shka)"
   :maintainer "Marek Kochanowicz (aka shka)"
   :serial T
-  :components ((:file "src/model/post-parser")
+  :components ((:file "src/common/exceptions")
+               (:file "src/model/post-parser")
                (:file "src/html/style")
                (:file "src/authentication")
-               (:file "src/common/exceptions")
                (:file "src/common/generic-functions")
                (:file "src/common/common-macros")
                (:file "src/common/base-classes")
