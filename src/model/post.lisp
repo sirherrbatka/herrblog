@@ -38,7 +38,8 @@
     :type string)))
 
 
-(defmethod to-html ((p post) (rules hash-table))
+(defmethod to-html ((p post)
+                    (rules hash-table))
   (apply 'markup* (cons (list :h2 (access-title p))
                         (expand-tree (access-content p)
                                      rules))))
