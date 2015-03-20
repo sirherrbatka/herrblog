@@ -89,16 +89,17 @@
 
 
 (defmethod get-style stringify ((generator styled-page-generator))
-  (stringify (access-style-html generator)
-             (access-style-body generator)
-             (access-style-body-after generator)
-             (access-style-header generator)
-             (access-style-h1 generator)
-             (access-style-menu generator)
-             (access-style-article generator)
-             (access-style-article-footer generator)
-             (access-style-display generator)
-             (access-style-line generator)))
+           (concatenate 'string
+                        (access-style-html generator)
+                        (access-style-body generator)
+                        (access-style-body-after generator)
+                        (access-style-header generator)
+                        (access-style-h1 generator)
+                        (access-style-menu generator)
+                        (access-style-article generator)
+                        (access-style-article-footer generator)
+                        (access-style-display generator)
+                        (access-style-line generator)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -156,7 +157,6 @@
 
 (defmethod get-style stringify ((generator no-columns-page-generator))
   (access-style-main generator))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -216,21 +216,52 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-class-with-initializer with-post-page-generator ()
+  ((m-expansion-map
+    :accessor access-expansion-map)
+   (m-post-style
+    :accessor access-post-style))
+  nil
+  init-with-post-page-generator
+  post-page-generator)
+
+
+(defmethod get-style stringify ((generator with-post-page-generator))
+  (access-post-style generator))
+
+
+(define-reseting-accessor access-expansion-map with-post-page-generator)
+(define-reseting-accessor access-post-style with-post-page-generator)
+
+
+(bind-defun init-default-with-post-page-generator
+    init-with-post-page-generator
+    (with-post-page-generator)
+    *default-expansion-map*
+    *default-post-style*)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-class-with-initializer main-page-generator (no-columns-page-generator
-                                                    common-generator)
+                                                    common-generator
+                                                    with-post-page-generator)
   ((m-posts-on-main-page-count
     :type (unsigned-byte 8)
     :initarg :posts-on-main-page-count
-    :accessor access-posts-on-main-page-count))
+    :accessor access-posts-on-main-page-count)
+   (m-expanding-map
+    :accessor access-expanding-map))
   nil
   init-main-page-generator
   main-page-generator)
+
 
 (bind-defun
     init-default-main-page-generator
     init-main-page-generator
     (main-page-generator)
-  10)
+  10
+  *default-expansion-map*)
 
 
 (defmethod initialize-instance :around ((object main-page-generator) &key)
@@ -242,14 +273,17 @@
 (define-init-chain init-default-whole-main-page-generator
     main-page-generator
   init-default-common-generator
+  init-default-with-post-page-generator
   init-default-main-page-generator)
 
 
 (define-reseting-accessor access-posts-on-main-page-count m-posts-on-main-page-count)
+(define-reseting-accessor access-expanding-map m-expanding-map)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-class-with-initializer posts-list-generator (columns-page-generator common-generator)
+(define-class-with-initializer posts-list-generator (columns-page-generator
+                                                     common-generator)
   ()
   nil
   init-posts-list-generator
@@ -261,7 +295,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-class-with-initializer categories-list-generator (columns-page-generator common-generator)
+(define-class-with-initializer categories-list-generator (columns-page-generator
+                                                          common-generator)
   ()
   nil
   init-categories-list-generator
@@ -274,25 +309,33 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-class-with-initializer post-page-generator (no-columns-page-generator common-generator)
+(define-class-with-initializer post-page-generator (no-columns-page-generator
+                                                    with-post-page-generator
+                                                    common-generator)
   ((m-expanding-map
     :type list
-    :accessor access-expanding-map))
+    :accessor access-expanding-map)
+   (m-post-style
+    :type string
+    :accessor access-post-style))
   nil
   init-post-page-generator
   post-page-generator)
 
 
 (define-reseting-accessor access-expanding-map m-expanding-map)
+(define-reseting-accessor access-post-style m-post-style)
 
 
 (bind-defun init-default-post-page-generator
-            init-post-page-generator
-            (post-page-generator)
-            *default-expansion-map*)
+    init-post-page-generator
+    (post-page-generator)
+    *default-expansion-map*
+  *default-post-style*)
 
 
 (define-init-chain init-default-whole-post-page-generator post-page-generator
+  init-default-with-post-page-generator
   init-default-post-page-generator
   init-default-common-generator)
 
@@ -323,13 +366,13 @@
                                (object main-container))
   (flet ((generate-posts-html (posts-list)
            (reduce #'stringify
-                   (mapcar (lambda (x) (stringify (to-html x)
+                   (mapcar (lambda (x) (stringify (to-html x (access-expanding-map generator))
                                                   (markup* (list :a :href (format nil
                                                                                   "entry?title=~a"
                                                                                   (slot-value x
                                                                                               'm-id))
                                                                  "Comments"))))
-                          posts-list))))
+                           posts-list))))
 
     (standard-page
         (get-style generator)
@@ -357,6 +400,10 @@
                                         (get-post-ids object))))))
 
 
+(defun hash-keys (hash-table)
+  (loop for key being the hash-keys of hash-table collect key))
+
+
 (defmethod generate-page-from ((generator categories-list-generator)
                                (object main-container))
   (standard-page
@@ -370,7 +417,3 @@
                                                                        'm-title))))
 
                                 (hash-keys (access-categories object))))))
-
-
-(defun hash-keys (hash-table)
-  (loop for key being the hash-keys of hash-table collect key))
