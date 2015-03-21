@@ -24,6 +24,7 @@
   :maintainer "Marek Kochanowicz (aka shka)"
   :serial T
   :components ((:file "src/common/exceptions")
+               (:file "src/common/utility")
                (:file "src/model/post-parser")
                (:file "src/html/style")
                (:file "src/authentication")

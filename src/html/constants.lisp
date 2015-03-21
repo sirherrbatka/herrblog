@@ -29,4 +29,6 @@
 
 (defvar *default-line* "hr { border: 0; height: 0; width: 75% margin-left: auto; margin-right: auto; border-top: 0.125em solid rgba(0, 0, 0, 0.1); border-bottom: 0.063em solid rgba(255, 255, 255, 0.3); }")
 
-(defvar *default-post-style* "")
+(defvar *default-post* "")
+
+(defvar *default-link* "a { text-decoration: none; color: inherit; outline: none; }")

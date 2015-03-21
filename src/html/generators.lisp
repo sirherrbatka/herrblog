@@ -58,9 +58,14 @@
    (m-style-line
     :type string
     :initarg :style-line
-    :accessor access-style-line))
+    :accessor access-style-line)
+   (m-style-link
+    :type string
+    :initarg :style-link
+    :accessor access-style-link))
   nil
   init-styled-page-generator styled-page-generator)
+
 
 (bind-defun
     init-default-styled-page-generator
@@ -74,7 +79,9 @@
   *default-article*
   *default-article-footer*
   *default-display*
-  *default-line*)
+  *default-line*
+  *default-link*)
+
 
 (define-reseting-accessor access-style-html m-style-html)
 (define-reseting-accessor access-style-body m-style-body)
@@ -86,20 +93,21 @@
 (define-reseting-accessor access-style-article-footer m-style-article-footer)
 (define-reseting-accessor access-style-display m-style-display)
 (define-reseting-accessor access-style-line m-style-line)
+(define-reseting-accessor access-style-link m-style-link)
 
 
 (defmethod get-style stringify ((generator styled-page-generator))
-           (concatenate 'string
-                        (access-style-html generator)
-                        (access-style-body generator)
-                        (access-style-body-after generator)
-                        (access-style-header generator)
-                        (access-style-h1 generator)
-                        (access-style-menu generator)
-                        (access-style-article generator)
-                        (access-style-article-footer generator)
-                        (access-style-display generator)
-                        (access-style-line generator)))
+           (stringify (access-style-html generator)
+                      (access-style-body generator)
+                      (access-style-body-after generator)
+                      (access-style-header generator)
+                      (access-style-h1 generator)
+                      (access-style-menu generator)
+                      (access-style-article generator)
+                      (access-style-article-footer generator)
+                      (access-style-display generator)
+                      (access-style-line generator)
+                      (access-style-link generator)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -238,7 +246,7 @@
     init-with-post-page-generator
     (with-post-page-generator)
     *default-expansion-map*
-    *default-post-style*)
+    *default-post*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -331,7 +339,7 @@
     init-post-page-generator
     (post-page-generator)
     *default-expansion-map*
-  *default-post-style*)
+    *default-post*)
 
 
 (define-init-chain init-default-whole-post-page-generator post-page-generator
@@ -373,7 +381,6 @@
                                                                                               'm-id))
                                                                  "Comments"))))
                            posts-list))))
-
     (standard-page
         (get-style generator)
         (get-menu generator)
@@ -395,7 +402,6 @@
                                                                                                   'm-id)))
                                                            (slot-value x
                                                                        'm-title))))
-
                                 (mapcar (lambda (x) (get-post object x))
                                         (get-post-ids object))))))
 
@@ -413,7 +419,6 @@
     (reduce #'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
                                                                                       "category?title=~a"
                                                                                       x))
-                                                           (slot-value x
-                                                                       'm-title))))
+                                                           (slot-value x 'm-title))))
 
                                 (hash-keys (access-categories object))))))

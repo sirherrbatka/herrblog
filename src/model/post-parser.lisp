@@ -34,9 +34,8 @@
                                         expansion-map)
                                 ac)))
                  (t
-                  (worker rest
-                          (cons (worker first nil)
-                                ac)))))))
+                  (worker first
+                          (worker rest ac)))))))
     (worker tree nil)))
 
 
