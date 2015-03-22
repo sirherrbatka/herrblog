@@ -2,7 +2,8 @@
 
 
 (defun t-make-and-add-post (title html-content time)
-  (declare (type string title html-content))
+  (declare (type string title)
+           (type list html-content))
   (add-post *blog*
             (make-post title
                        html-content

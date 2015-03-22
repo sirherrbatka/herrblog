@@ -385,9 +385,8 @@
         (get-style generator)
         (get-menu generator)
         "Main Page"
-      (generate-posts-html (get-most-recent-posts
-                            object
-                            (slot-value generator 'm-posts-on-main-page-count))))))
+      (generate-posts-html (get-most-recent-posts object
+                                                  (slot-value generator 'm-posts-on-main-page-count))))))
 
 
 (defmethod generate-page-from ((generator posts-list-generator)
@@ -404,10 +403,6 @@
                                                                        'm-title))))
                                 (mapcar (lambda (x) (get-post object x))
                                         (get-post-ids object))))))
-
-
-(defun hash-keys (hash-table)
-  (loop for key being the hash-keys of hash-table collect key))
 
 
 (defmethod generate-page-from ((generator categories-list-generator)

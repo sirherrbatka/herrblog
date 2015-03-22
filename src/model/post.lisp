@@ -1,5 +1,6 @@
 (in-package :blog)
 
+
 (defclass post (object-with-creation-timestamp
                 object-with-pages-cache)
   ((m-content
@@ -21,11 +22,6 @@
     :initarg :tags-list)))
 
 
-(defmethod initialize-instance :after ((post post) &key)
-  (setf (access-cached-page-index post)
-        (slot-value post 'm-id)))
-
-
 (defclass post-comment (object-with-timestamp
                         object-with-creation-timestamp)
   ((m-content
@@ -40,9 +36,9 @@
 
 (defmethod to-html ((p post)
                     (rules hash-table))
-  (apply 'markup* (cons (list :h2 (access-title p))
-                        (expand-tree (access-content p)
-                                     rules))))
+  (apply #'markup* (print (cons (list :h2 (access-title p))
+                                (expand-tree (access-content p)
+                                             rules)))))
 
 
 (defmethod add-post ((blog main-container)
@@ -50,6 +46,7 @@
   (with-slots ((id m-id)
                (tags-list m-tags-list))
       new-entry
+
 
     (with-slots ((posts m-posts)
                  (post-ids m-post-ids)
@@ -146,13 +143,13 @@
 
 
 (defun make-post (title html-content time &optional (tags nil))
-  (declare (type string title html-content)
+  (declare (type string title)
+           (type list html-content)
            (type list tags)) ;;temporary
   (let ((id (id-from-title title)))
     (make-instance 'post
                    :title title
                    :tags-list tags
                    :id id
-                   :cached-page-index id
                    :creation-timestamp time
                    :content html-content)))
