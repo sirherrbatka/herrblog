@@ -46,3 +46,5 @@
 (defgeneric reset-cache (object))
 (defgeneric get-menu (generator))
 (defgeneric update-timestamp (object))
+(defgeneric get-menu-list (generator object)
+  (:method-combination append))

@@ -417,3 +417,19 @@
                                                            (slot-value x 'm-title))))
 
                                 (hash-keys (access-categories object))))))
+
+
+(defun generate-comment-page (post)
+  (standard-page
+      (get-style)
+      (get-menu)
+      "New Post"
+    (markup* (:h2 "Add a new comment")
+             (:form :action "/new-comment-added" :method "post" :id "addform"
+                    (:input :type "hidden" :name "Post" :value post)
+                    (:p "Your name" (:br)
+                        (:input :type "text" :name "author" :class "txt"))
+                    (:p "Content" (:br)
+                        (:textarea :name "content" :cols 80 :rows 20)
+                        (:/textarea))
+                    (:p (:input :type "submit" :value "Add" :class "btn"))))))

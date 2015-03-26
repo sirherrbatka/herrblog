@@ -25,25 +25,38 @@
 (define-easy-handler (categories-page :uri "/categories") ()
   (define-with-page-not-found
       (generate-page-from *default-categories-list-generator*
-                          *blog*))) ;;TODO: handle exception
+                          *blog*)))
 
 
 (define-easy-handler (blog-post :uri "/entry" :default-request-type :get) (title)
   (define-with-page-not-found
       (generate-page-from *default-post-generator*
-                          (get-post *blog* title)))) ;;TODO: handle exception
+                          (get-post *blog* title))))
 
 
 (define-easy-handler (category-page :uri "/category") (title)
   (define-with-page-not-found
       (generate-page-from *default-posts-list-generator*
                           (get-category *blog*
-                                        title)))) ;;TODO: Handle exception
+                                        title))))
 
 
 (define-easy-handler (posts-page :uri "/posts") ()
   (define-with-page-not-found
       (generate-page-from *default-posts-list-generator*
-                          *blog*))) ;;TODO: handle exception
+                          *blog*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-easy-handler (new-comment-added :uri "/added-comment") (post author content)
+  (execute 't-make-and-add-comment
+           post
+           author
+           content
+           (get-universal-time))
+  (redirect (stringify "/entry=?title=" post)))
+
+
+(define-easy-handler (add-new-comment :uri "/add-comment") (post)
+  (define-with-page-not-found
+      (generate-comment-page post)))
