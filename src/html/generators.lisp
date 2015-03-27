@@ -385,9 +385,8 @@
         (get-style generator)
         (get-menu generator)
         "Main Page"
-      (generate-posts-html (get-most-recent-posts
-                            object
-                            (slot-value generator 'm-posts-on-main-page-count))))))
+      (generate-posts-html (get-most-recent-posts object
+                                                  (slot-value generator 'm-posts-on-main-page-count))))))
 
 
 (defmethod generate-page-from ((generator posts-list-generator)
@@ -406,10 +405,6 @@
                                         (get-post-ids object))))))
 
 
-(defun hash-keys (hash-table)
-  (loop for key being the hash-keys of hash-table collect key))
-
-
 (defmethod generate-page-from ((generator categories-list-generator)
                                (object main-container))
   (standard-page
@@ -422,3 +417,19 @@
                                                            (slot-value x 'm-title))))
 
                                 (hash-keys (access-categories object))))))
+
+
+(defun generate-comment-page (post)
+  (standard-page
+      (get-style)
+      (get-menu)
+      "New Post"
+    (markup* (:h2 "Add a new comment")
+             (:form :action "/new-comment-added" :method "post" :id "addform"
+                    (:input :type "hidden" :name "Post" :value post)
+                    (:p "Your name" (:br)
+                        (:input :type "text" :name "author" :class "txt"))
+                    (:p "Content" (:br)
+                        (:textarea :name "content" :cols 80 :rows 20)
+                        (:/textarea))
+                    (:p (:input :type "submit" :value "Add" :class "btn"))))))
