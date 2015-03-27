@@ -23,6 +23,15 @@
                           (make-method ,form)))
            form))))
 
+
+(define-method-combination reverse-append ()
+  ((primary () :required t))
+  (if (endp (cdr primary))
+      `(the list (call-method (car primary)))
+      (cons 'append (mapcar #'(lambda (method) `(the list (call-method ,method)))
+                            (reverse primary)))))
+
+
 (define-method-combination stringify
     :operator stringify
     :identity-with-one-argument t)
