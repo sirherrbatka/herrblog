@@ -146,13 +146,9 @@
   (access-style-menu generator))
 
 
-(defmethod get-menu ((generator with-menu-page-generator))
-  (with-accessors ((m-additional-menu-items access-additional-menu-items)
-                   (m-main-menu-items access-main-menu-items)) generator
-    (markup* (apply #'standard-menu (append m-main-menu-items
-                                            (list (if (null m-additional-menu-items)
-                                                      'no-line 'line))
-                                            m-additional-menu-items)))))
+(defmethod get-menu ((generator with-menu-page-generator)
+                     (object T))
+  (markup* (apply #'standard-menu (compose-menu generator object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -364,7 +360,7 @@
                                (object post))
   (standard-page
    (get-style generator)
-   (get-menu generator)
+   (get-menu generator post)
    (access-title object)
    (to-html object (access-expanding-map generator))
    (markup* '(:hr))))
@@ -383,7 +379,7 @@
                            posts-list))))
     (standard-page
         (get-style generator)
-        (get-menu generator)
+        (get-menu generator post)
         "Main Page"
       (generate-posts-html (get-most-recent-posts object
                                                   (slot-value generator 'm-posts-on-main-page-count))))))
@@ -393,7 +389,7 @@
                                (object posts-container))
   (standard-page
       (get-style generator)
-      (get-menu generator)
+      (get-menu generator post)
       "Posts"
     (reduce #'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
                                                                                       "entry?title=~a"
@@ -409,7 +405,7 @@
                                (object main-container))
   (standard-page
       (get-style generator)
-      (get-menu generator)
+      (get-menu generator post)
       "Categories"
     (reduce #'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
                                                                                       "category?title=~a"
@@ -440,7 +436,7 @@
 (defun generate-comment-page (post)
   (standard-page
       (get-style)
-      (get-menu)
+      (get-menu generator post)
       "New Post"
     (markup* (:h2 "Add a new comment")
              (:form :action "/new-comment-added" :method "post" :id "addform"

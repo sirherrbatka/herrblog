@@ -17,7 +17,7 @@
   (:method-combination stringify))
 (defgeneric set-cached-html (page value))
 (defgeneric reset-cache (object))
-(defgeneric get-menu (generator))
+(defgeneric get-menu (generator object))
 (defgeneric update-timestamp (object))
 (defgeneric compose-menu (generator object)
   (:method-combination reverse-append))
