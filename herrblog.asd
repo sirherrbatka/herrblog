@@ -23,7 +23,8 @@
   :author "Marek Kochanowicz (aka shka)"
   :maintainer "Marek Kochanowicz (aka shka)"
   :serial T
-  :components ((:file "src/common/exceptions")
+  :components ((file "src/common/method-combinations")
+               (:file "src/common/exceptions")
                (:file "src/common/utility")
                (:file "src/common/generic-functions")
                (:file "src/common/common-macros")

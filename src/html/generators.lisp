@@ -418,6 +418,24 @@
 
                                 (hash-keys (access-categories object))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod compose-menu ((generator with-menu-page-generator)
+                         (object T))
+    (with-accessors ((m-additional-menu-items access-additional-menu-items)
+                     (m-main-menu-items access-main-menu-items)) generator
+      (append m-main-menu-items
+              'line
+              m-additional-menu-items)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod compose-menu ((generator post-page-generator)
+                         (object post))
+  (list (list (stringify "add-comment=?post=" (slot-value post 'm-id))
+              "Add comment")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun generate-comment-page (post)
   (standard-page
