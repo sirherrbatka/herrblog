@@ -220,6 +220,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defclass comments-page-generator (no-columns-page-generator
+                                   styled-page-generator
+                                   with-menu-page-generator)
+  ())
+
+
+(define-init-chain init-default-comments-page-generator comments-page-generator
+  init-default-styled-page-generator
+  init-default-with-menu-page-generator)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-class-with-initializer with-post-page-generator ()
   ((m-expansion-map
     :accessor access-expansion-map)
@@ -360,7 +372,7 @@
                                (object post))
   (standard-page
    (get-style generator)
-   (get-menu generator post)
+   (get-menu generator object)
    (access-title object)
    (to-html object (access-expanding-map generator))
    (markup* '(:hr))))
@@ -379,7 +391,7 @@
                            posts-list))))
     (standard-page
         (get-style generator)
-        (get-menu generator post)
+        (get-menu generator t)
         "Main Page"
       (generate-posts-html (get-most-recent-posts object
                                                   (slot-value generator 'm-posts-on-main-page-count))))))
@@ -389,7 +401,7 @@
                                (object posts-container))
   (standard-page
       (get-style generator)
-      (get-menu generator post)
+      (get-menu generator object)
       "Posts"
     (reduce #'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
                                                                                       "entry?title=~a"
@@ -405,7 +417,7 @@
                                (object main-container))
   (standard-page
       (get-style generator)
-      (get-menu generator post)
+      (get-menu generator object)
       "Categories"
     (reduce #'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
                                                                                       "category?title=~a"
@@ -414,6 +426,23 @@
 
                                 (hash-keys (access-categories object))))))
 
+
+(defmethod generate-page-from ((generator comments-page-generator)
+                               (object post))
+  (standard-page
+      (get-style generator)
+      (get-menu generator object)
+      "New Post"
+    (markup (:h2 "Add a new comment")
+            (:form :action "/added-comment" :method "post" :id "addform"
+                   (:input :type "hidden" :name "post" :value (slot-value object 'm-id))
+                   (:p "Your name" (:br)
+                       (:input :type "text" :name "author" :class "txt" :value ""))
+                   (:p "Content" (:br)
+                       (:textarea :name "content" :cols 80 :rows 20 :value "")
+                       (:/textarea))
+                   (:p (:input :type "submit" :value "Add" :class "btn" :value ""))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmethod compose-menu ((generator with-menu-page-generator)
@@ -421,29 +450,13 @@
     (with-accessors ((m-additional-menu-items access-additional-menu-items)
                      (m-main-menu-items access-main-menu-items)) generator
       (append m-main-menu-items
-              'line
+              (list 'line)
               m-additional-menu-items)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmethod compose-menu ((generator post-page-generator)
                          (object post))
-  (list (list (stringify "add-comment=?post=" (slot-value post 'm-id))
-              "Add comment")))
+  (list (list (stringify "add-comment?post=" (slot-value object 'm-id)) "Add comment")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun generate-comment-page (post)
-  (standard-page
-      (get-style)
-      (get-menu generator post)
-      "New Post"
-    (markup* (:h2 "Add a new comment")
-             (:form :action "/new-comment-added" :method "post" :id "addform"
-                    (:input :type "hidden" :name "Post" :value post)
-                    (:p "Your name" (:br)
-                        (:input :type "text" :name "author" :class "txt"))
-                    (:p "Content" (:br)
-                        (:textarea :name "content" :cols 80 :rows 20)
-                        (:/textarea))
-                    (:p (:input :type "submit" :value "Add" :class "btn"))))))

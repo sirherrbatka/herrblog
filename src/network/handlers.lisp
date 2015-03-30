@@ -10,6 +10,8 @@
   (init-default-whole-posts-list-generator (make-instance 'posts-list-generator)))
 (defvar *default-post-generator*
   (init-default-whole-post-page-generator (make-instance 'post-page-generator)))
+(defvar *default-comments-page-generator*
+  (init-default-comments-page-generator (make-instance 'comments-page-generator)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -53,14 +55,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-easy-handler (new-comment-added :uri "/added-comment") (post author content)
-  (execute 't-make-and-add-comment
+  (execute 't-add-comment
            post
            author
            content
            (get-universal-time))
-  (redirect (stringify "/entry=?title=" post)))
+  (redirect (stringify "/entry?title=" post)))
 
 
 (define-easy-handler (add-new-comment :uri "/add-comment") (post)
   (define-with-page-not-found
-      (generate-comment-page post)))
+    (generate-page-from *default-comments-page-generator*
+                        (get-post *blog* post))))

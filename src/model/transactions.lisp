@@ -25,7 +25,7 @@
         (with-slots ((timestamp m-timestamp)
                      (comments m-comments))
             target
-          (setf comments (nreverse (cons (make-instance 'entry-comment
+          (setf comments (nreverse (cons (make-instance 'post-comment
                                                         :content content
                                                         :author author
                                                         :creation-timestamp time)
