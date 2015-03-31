@@ -1,5 +1,7 @@
 (in-package :blog)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defvar *default-posts-on-main-page* 5)
 
 (defvar *default-menu-items* '(("blog" "Main Page")

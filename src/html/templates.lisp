@@ -1,5 +1,6 @@
 (in-package :blog)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun standard-menu (&rest body)
   (append (list :ui :role "navigation" :id "menu")

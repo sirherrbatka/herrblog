@@ -1,5 +1,6 @@
 (in-package :blog)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass post (object-with-creation-timestamp
                 object-with-pages-cache)

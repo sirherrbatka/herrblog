@@ -1,5 +1,6 @@
 (in-package :blog)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun hash-keys (hash-table)
   (declare (type hash-table hash-table))

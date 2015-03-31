@@ -1,5 +1,7 @@
 (in-package :blog)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-method-combination with-start ()
          ((around (:around))
           (before (:before))

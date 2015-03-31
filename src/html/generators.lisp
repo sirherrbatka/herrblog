@@ -360,8 +360,8 @@
 (defmethod generate-page-from :start ((generator caching-generator)
                                       (object object-with-pages-cache))
   (with-accessors ((m-cached-html access-cached-html)) generator
-    (multiple-value-bind (cached founded) (gethash (get-cached-page-index object) m-cached-html)
-      (get-cached-html (if (or (not founded)
+    (multiple-value-bind (cached found) (gethash (get-cached-page-index object) m-cached-html)
+      (get-cached-html (if (or (not found)
                                (edited-before object cached))
                            (setf (gethash (get-cached-page-index object) m-cached-html)
                                  (make-cached-page (call-next-method)))

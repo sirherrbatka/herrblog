@@ -1,5 +1,8 @@
 (in-package :blog)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defvar *transaction-log* nil)
 
 (defun make-blog ()
   (make-instance 'main-container))

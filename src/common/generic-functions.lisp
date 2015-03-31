@@ -1,5 +1,7 @@
 (in-package :blog)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defgeneric generate-page-from (generator object)
   (:method-combination with-start))
 (defgeneric to-html (p rules))
