@@ -34,7 +34,6 @@
                (:file "src/model/transactions")
                (:file "src/model/post")
                (:file "src/html/constants")
-               (:file "src/html/style")
                (:file "src/html/templates")
                (:file "src/html/generators")
                (:file "src/authentication")
