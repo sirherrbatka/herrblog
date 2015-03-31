@@ -45,7 +45,7 @@
 (defclass object-with-pages-cache (object-with-timestamp)
   ((m-cached-page-index
     :reader get-cached-page-index
-    :initform nil)))
+    :initarg :cached-page-index)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

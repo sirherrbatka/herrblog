@@ -374,8 +374,11 @@
    (get-style generator)
    (get-menu generator object)
    (access-title object)
-   (to-html object (access-expanding-map generator))
-   (markup* '(:hr))))
+    (to-html object (access-expanding-map generator))
+    (markup* '(:hr))
+    (reduce #'stringify (mapcar (lambda (x) (markup* (list :h3 (access-author x))
+                                                     (list :p (access-content x))))
+                                (slot-value object 'm-comments)))))
 
 
 (defmethod generate-page-from ((generator main-page-generator)

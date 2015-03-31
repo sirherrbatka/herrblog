@@ -17,9 +17,7 @@
 
 
 (defun t-add-comment (entry author content time)
-  (let ((target (gethash entry
-                         (slot-value *blog*
-                                     'm-posts))))
+  (let ((target (gethash entry (slot-value *blog* 'm-posts))))
     (if (null target)
         (error "No such post")
         (with-slots ((timestamp m-timestamp)

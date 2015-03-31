@@ -45,7 +45,8 @@
           (progn
             (setf (gethash id categories)
                   (make-instance 'posts-category
-                                 :category-name id))
+                                 :category-name id
+                                 :cached-page-index id))
             (update-timestamp blog))))))
 
 

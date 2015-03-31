@@ -36,9 +36,9 @@
 
 (defmethod to-html ((p post)
                     (rules hash-table))
-  (apply #'markup* (print (cons (list :h2 (access-title p))
-                                (expand-tree (access-content p)
-                                             rules)))))
+  (apply #'markup* (cons (list :h2 (access-title p))
+                         (expand-tree (access-content p)
+                                      rules))))
 
 
 (defmethod add-post ((blog main-container)
@@ -145,11 +145,12 @@
 (defun make-post (title html-content time &optional (tags nil))
   (declare (type string title)
            (type list html-content)
-           (type list tags)) ;;temporary
+           (type list tags))
   (let ((id (id-from-title title)))
     (make-instance 'post
                    :title title
                    :tags-list tags
+                   :cached-page-index id
                    :id id
                    :creation-timestamp time
                    :content html-content)))
