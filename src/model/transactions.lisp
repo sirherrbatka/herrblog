@@ -22,11 +22,13 @@
     (if (null target)
         (error "No such post")
         (with-slots ((timestamp m-timestamp)
-                     (comments m-comments))
-            target
+                     (comments m-comments)) target
           (setf comments (nreverse (cons (make-instance 'post-comment
                                                         :content content
                                                         :author author
                                                         :creation-timestamp time)
                                          comments)))
           (setf timestamp (get-universal-time))))))
+
+
+;;(defun t-update-post ())

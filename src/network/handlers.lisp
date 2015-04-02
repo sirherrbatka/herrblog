@@ -55,12 +55,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-easy-handler (new-comment-added :uri "/added-comment") (post author content)
-  (execute 't-add-comment
-           post
-           author
-           content
-           (get-universal-time))
-  (redirect (stringify "/entry?title=" post)))
+  (unless (any (lambda (x) (= 0 (length x)) (list post author content)))
+    (execute 't-add-comment
+             post
+             author
+             content
+             (get-universal-time))
+    (redirect (stringify "/entry?title=" post))))
 
 
 (define-easy-handler (add-new-comment :uri "/add-comment") (post)

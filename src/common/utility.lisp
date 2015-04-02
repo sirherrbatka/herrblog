@@ -12,3 +12,8 @@
       ""
       (reduce (lambda (a b) (concatenate 'string a b))
               rest)))
+
+(defun add-to-hash (key value hash)
+  (declare (type hash-table hash))
+  (setf (gethash key hash)
+        value))

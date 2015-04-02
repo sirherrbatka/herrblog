@@ -29,6 +29,7 @@
                (:file "src/common/generic-functions")
                (:file "src/common/common-macros")
                (:file "src/common/base-classes")
+               (:file "src/model/spam-filter")
                (:file "src/model/post-parser")
                (:file "src/model/posts-container")
                (:file "src/model/transactions")

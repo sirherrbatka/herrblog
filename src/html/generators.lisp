@@ -440,11 +440,11 @@
             (:form :action "/added-comment" :method "post" :id "addform"
                    (:input :type "hidden" :name "post" :value (slot-value object 'm-id))
                    (:p "Your name" (:br)
-                       (:input :type "text" :name "author" :class "txt" :value ""))
+                       (:input :type "text" :name "author" :class "txt" :required "true"))
                    (:p "Content" (:br)
-                       (:textarea :name "content" :cols 80 :rows 20 :value "")
+                       (:textarea :name "content" :cols 80 :rows 20 :required "true")
                        (:/textarea))
-                   (:p (:input :type "submit" :value "Add" :class "btn" :value ""))))))
+                   (:p (:input :type "submit" :value "Add" :class "btn"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
