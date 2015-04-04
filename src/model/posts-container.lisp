@@ -43,10 +43,11 @@
       (if found
           (error "Category already exists!")
           (prog1
-              (setf (gethash id categories)
-                    (make-instance 'posts-category
-                                   :category-name id
-                                   :cached-page-index id))
+              (let ((new-id (string-to-id id)))
+                (setf (gethash new-id categories)
+                      (make-instance 'posts-category
+                                     :category-name new-id
+                                     :cached-page-index new-id)))
             (update-timestamp blog))))))
 
 

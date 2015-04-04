@@ -17,3 +17,9 @@
   (declare (type hash-table hash))
   (setf (gethash key hash)
         value))
+
+
+(defun string-to-id (title)
+  (declare (type string title))
+  (string-upcase (string-trim " "
+                              (substitute #\- #\Space title))))

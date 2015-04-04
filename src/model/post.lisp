@@ -65,7 +65,7 @@
       (mapc (lambda (x) (multiple-value-bind (cat found) (gethash x categories)
                           (add-post (if found
                                         cat
-                                        (new-category x blog))
+                                        (new-category (string-to-id x) blog))
                                     new-entry)))
             tags-list)))
 
@@ -124,34 +124,11 @@
           (error "Entry already present")))))
 
 
-(defun title-string-to-url-string (title)
-  (declare (type string title))
-  (string-downcase (string-trim " "
-                                (substitute #\-
-                                            #\Space
-                                            title))))
-
-
-(defun id-from-title (str)
-  (declare (type string str))
-  (string-upcase (title-string-to-url-string str)))
-
-
-(defun url-from-id (symb)
-  (declare (type symbol symb))
-  (string-downcase (string symb)))
-
-
-(defun id-from-url (url)
-  (declare (type string url))
-  (string-upcase url))
-
-
 (defun make-post (title html-content time &optional (tags nil))
   (declare (type string title)
            (type list html-content)
            (type list tags))
-  (let ((id (id-from-title title)))
+  (let ((id (string-to-id title)))
     (make-instance 'post
                    :title title
                    :tags-list tags
