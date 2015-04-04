@@ -2,8 +2,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun defpost (title html-content)
+(defun defpost (title html-content tags)
+  (declare (type string title)
+           (type list html-content tags))
   (execute 't-make-and-add-post
            title
            html-content
-           (get-universal-time)))
+           (get-universal-time)
+           tags))

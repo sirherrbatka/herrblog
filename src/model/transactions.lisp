@@ -2,13 +2,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun t-make-and-add-post (title html-content time)
+(defun t-make-and-add-post (title html-content time tags)
   (declare (type string title)
            (type list html-content))
   (add-post *blog*
             (make-post title
                        html-content
-                       time)))
+                       time
+                       tags)))
 
 
 (defun t-remove-post (id)

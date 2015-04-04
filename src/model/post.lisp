@@ -26,9 +26,8 @@
    (m-following
     :accessor access-following)))
 
-(defmethod initialize-instance ((object post) &key (serie nil) title id tags-list)
-  (setf (slot-value object 'm-serie) serie
-        (slot-value object 'm-title) title
+(defmethod initialize-instance ((object post) &key title id tags-list)
+  (setf (slot-value object 'm-title) title
         (slot-value object 'm-id) id
         (slot-value object 'm-tags-list) tags-list)
   (call-next-method))
@@ -55,21 +54,19 @@
 (defmethod add-post ((blog main-container)
                      (new-entry post))
   (with-slots ((id m-id)
-               (tags-list m-tags-list))
-      new-entry
-
+               (tags-list m-tags-list)) new-entry
 
     (with-slots ((posts m-posts)
                  (post-ids m-post-ids)
                  (post-count m-post-count)
                  (timestamp m-timestamp)
-                 (categories m-categories))
-        blog
+                 (categories m-categories)) blog
 
       (mapc (lambda (x) (multiple-value-bind (cat found) (gethash x categories)
-                          (if found
-                              (add-post cat new-entry)
-                              (add-post (new-category x blog) new-entry))))
+                          (add-post (if found
+                                        cat
+                                        (new-category x blog))
+                                    new-entry)))
             tags-list)))
 
   (call-next-method))
@@ -115,9 +112,7 @@
                  (post-count m-post-count)
                  (timestamp m-timestamp))
         blog
-
       (if (null (gethash id posts))
-
           (progn
             (incf post-count)
             (setf (gethash id posts)
@@ -126,7 +121,6 @@
                   post-ids)
             (setf timestamp
                   (get-universal-time)))
-
           (error "Entry already present")))))
 
 

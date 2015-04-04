@@ -410,8 +410,7 @@
                                                                                       "entry?title=~a"
                                                                                       (slot-value x
                                                                                                   'm-id)))
-                                                           (slot-value x
-                                                                       'm-title))))
+                                                           (slot-value x 'm-title))))
                                 (mapcar (lambda (x) (get-post object x))
                                         (get-post-ids object))))))
 
@@ -425,7 +424,7 @@
     (reduce #'stringify (mapcar (lambda (x) (markup* (list :li (list :a :href (format nil
                                                                                       "category?title=~a"
                                                                                       x))
-                                                           (slot-value x 'm-title))))
+                                                           x)))
 
                                 (hash-keys (access-categories object))))))
 

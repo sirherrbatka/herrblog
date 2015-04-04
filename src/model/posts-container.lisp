@@ -39,23 +39,20 @@
 (defmethod new-category ((id string)
                          (blog main-container))
   (with-slots ((categories m-categories)) blog
-    (let ((found (nth-value 2 (gethash id categories))))
+    (let ((found (nth-value 1 (gethash id categories))))
       (if found
           (error "Category already exists!")
-          (progn
-            (setf (gethash id categories)
-                  (make-instance 'posts-category
-                                 :category-name id
-                                 :cached-page-index id))
+          (prog1
+              (setf (gethash id categories)
+                    (make-instance 'posts-category
+                                   :category-name id
+                                   :cached-page-index id))
             (update-timestamp blog))))))
 
 
 (defmethod get-category ((blog posts-container) id)
   (declare (type string id))
-  (let ((out (gethash id
-                      (slot-value blog
-                                  'm-categories))))
-
+  (let ((out (gethash id (slot-value blog 'm-categories))))
     (if (null out)
         (error 'page-not-found "No category with such id: ~S" id)
         out)))
