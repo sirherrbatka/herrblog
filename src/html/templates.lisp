@@ -23,4 +23,5 @@
                    (:header
                     (:h1 "some tytul"))
                    (raw ,menu)
-                   (:main (raw ,@body))))))
+                   (:main
+                    (raw ,@body))))))

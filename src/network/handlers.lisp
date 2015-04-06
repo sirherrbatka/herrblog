@@ -55,7 +55,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-easy-handler (new-comment-added :uri "/added-comment") (post author content)
-  (unless (any (lambda (x) (= 0 (length x)) (list post author content)))
+  (unless (some (lambda (x) (= 0 (length x))) (list post author content))
     (execute 't-add-comment
              post
              author

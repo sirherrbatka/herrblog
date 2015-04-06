@@ -9,7 +9,7 @@
 
 (defvar *default-html* "html { font-family: 'Clear Sans'; background: #eee; }")
 
-(defvar *default-body* "body { background: #fff; padding: 1.250em; box-shadow: 0 0.125em 0.188em #ccc; max-width: 750em; overflow: hidden; margin: 1.875em auto; }")
+(defvar *default-body* "body {overflow: auto; background: #fff; padding: 1.250em; box-shadow: 0 0.125em 0.188em #ccc; max-width: 750em; margin: 1.875em;}")
 
 (defvar *default-body-after* "body:after { clear: both; width: 0.063em; height: 0.063em; display: block; visibility: hidden; content: \".\"; }")
 

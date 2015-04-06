@@ -16,8 +16,9 @@
 
 (defmacro define-reseting-accessor (accessor slot)
   `(defmethod (setf ,accessor) :before (new-value (object caching-generator))
-              (when (and (boundp (slot-value object (quote ,slot)))
-                         (not (equal (slot-value object (quote ,slot)) new-value)))
+              (when (and (slot-boundp  object (quote ,slot))
+                         (not (equal (slot-value object (quote ,slot))
+                                     new-value)))
                 (reset-cache object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

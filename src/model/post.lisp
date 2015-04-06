@@ -51,13 +51,10 @@
                    (m-content access-content)) p
 
     (apply #'markup*
-           (cons (list :h2
-                       (format nil
-                               "~a ~b"
-                               m-title
-                               m-tags-list))
-                 (expand-tree m-content
-                              rules)))))
+           (cons (list :h2 m-title)
+                 (cons (list :font :color "SlateGray" (format nil "~a" m-tags-list))
+                       (expand-tree m-content
+                                    rules))))))
 
 
 (defmethod add-post ((blog main-container)
