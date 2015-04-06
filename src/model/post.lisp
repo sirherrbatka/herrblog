@@ -46,9 +46,18 @@
 
 (defmethod to-html ((p post)
                     (rules hash-table))
-  (apply #'markup* (cons (list :h2 (access-title p))
-                         (expand-tree (access-content p)
-                                      rules))))
+  (with-accessors ((m-tags-list access-tags-list)
+                   (m-title access-title)
+                   (m-content access-content)) p
+
+    (apply #'markup*
+           (cons (list :h2
+                       (format nil
+                               "~a ~b"
+                               m-title
+                               m-tags-list))
+                 (expand-tree m-content
+                              rules)))))
 
 
 (defmethod add-post ((blog main-container)
