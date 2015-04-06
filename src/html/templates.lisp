@@ -21,7 +21,7 @@
                    (:style (raw ,style)))
                   (:body
                    (:header
-                    (:h1 "some tytul"))
+                    (:h1 "Metapatterns"))
                    (raw ,menu)
                    (:main
                     (raw ,@body))))))

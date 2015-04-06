@@ -9,7 +9,7 @@
 
 (defvar *default-html* "html { font-family: 'Clear Sans'; background: #eee; }")
 
-(defvar *default-source* "code { font-family: monospace; }")
+(defvar *default-source* "code { font-family: monospace; border-style: solid; border-width: medium;}")
 
 (defvar *default-body* "body {overflow: auto; background: #fff; padding: 1.250em; box-shadow: 0 0.125em 0.188em #ccc; max-width: 750em; margin: 1.875em;}")
 
