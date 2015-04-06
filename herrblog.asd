@@ -6,7 +6,7 @@
 (defpackage #:herrblog.asdf
   (:use #:cl #:asdf))
 
-(defpackage :blog
+(defpackage :herrblog
   (:use :common-lisp
         :hunchentoot
         :cl-markup

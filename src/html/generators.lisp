@@ -1,4 +1,4 @@
-(in-package :blog)
+(in-package :herrblog)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -63,7 +63,11 @@
    (m-style-link
     :type string
     :initarg :style-link
-    :accessor access-style-link))
+    :accessor access-style-link)
+   (m-style-code
+    :type string
+    :initarg :style-code
+    :accessor access-style-code))
   nil
   init-styled-page-generator styled-page-generator)
 
@@ -81,7 +85,8 @@
   *default-article-footer*
   *default-display*
   *default-line*
-  *default-link*)
+  *default-link*
+  *default-source*)
 
 
 (define-reseting-accessor access-style-html m-style-html)
@@ -95,6 +100,7 @@
 (define-reseting-accessor access-style-display m-style-display)
 (define-reseting-accessor access-style-line m-style-line)
 (define-reseting-accessor access-style-link m-style-link)
+(define-reseting-accessor access-style-code m-style-code)
 
 
 (defmethod get-style stringify ((generator styled-page-generator))
@@ -108,7 +114,8 @@
                       (access-style-article-footer generator)
                       (access-style-display generator)
                       (access-style-line generator)
-                      (access-style-link generator)))
+                      (access-style-link generator)
+                      (access-style-code generator)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

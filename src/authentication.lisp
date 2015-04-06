@@ -1,4 +1,4 @@
-(in-package :blog)
+(in-package :herrblog)
 
 
 (defmacro with-http-authentication (&rest body)
