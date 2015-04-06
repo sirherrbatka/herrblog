@@ -72,9 +72,7 @@
                  (categories m-categories)) blog
 
       (mapc (lambda (x) (multiple-value-bind (cat found) (gethash x categories)
-                          (add-post (if found
-                                        cat
-                                        (new-category (string-to-id x) blog))
+                          (add-post (if found cat (new-category x blog))
                                     new-entry)))
             tags-list)))
 
@@ -84,7 +82,7 @@
 (defmethod remove-post ((container main-container)
                         (id string))
   (with-slots ((categories m-categories)
-               (posts m-posts))
+               (posts m-posts)) container
       (multiple-value-bind (post found) (gethash id posts)
         (if found
             (progn
@@ -100,15 +98,14 @@
   (with-slots ((posts m-posts)
                (post-ids m-post-ids)
                (post-count m-post-count)
-               (timestamp m-timestamp))
-      (multiple-value-bind (post found) (gethash id posts)
-        (if found
-            (progn
-              (decf post-count)
-              (delete id post-ids :test :equal)
-              (remhash id posts)
-              (setf timestamp (get-universal-time)))
-            (error "No such post")))))
+               (timestamp m-timestamp)) container
+    (if (nth-value 1 (gethash id posts))
+        (progn
+          (decf post-count)
+          (delete id post-ids :test :equal)
+          (remhash id posts)
+          (update-timestamp container))
+        (error "No such post"))))
 
 
 (defmethod add-post ((blog posts-container)
@@ -128,8 +125,7 @@
                   new-entry)
             (push id
                   post-ids)
-            (setf timestamp
-                  (get-universal-time)))
+            (update-timestamp blog))
           (error "Entry already present")))))
 
 
@@ -140,7 +136,7 @@
   (let ((id (string-to-id title)))
     (make-instance 'post
                    :title title
-                   :tags-list tags
+                   :tags-list (mapcar #'string-to-id tags)
                    :cached-page-index id
                    :id id
                    :creation-timestamp time
