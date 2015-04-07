@@ -26,11 +26,13 @@
    (m-following
     :accessor access-following)))
 
+
 (defmethod initialize-instance ((object post) &key title id tags-list)
   (setf (slot-value object 'm-title) title
         (slot-value object 'm-id) id
         (slot-value object 'm-tags-list) tags-list)
   (call-next-method))
+
 
 (defclass post-comment (object-with-timestamp
                         object-with-creation-timestamp)

@@ -49,5 +49,5 @@
 (defvar *default-expansion-map* (make-expand-map (list :paragraph (lambda (x) (cons :p x)))
                                                  (list :points (lambda (x) (cons :ul (mapcar (lambda (y) (list :li y)) x))))
                                                  (list :enumeration (lambda (x) (cons :ol (mapcar (lambda (y) (list :li y)) x))))
-                                                 (list :quote (lambda (x) (if (> 80 (length x)) (list :blockqoute x) (list :q x))))
-                                                 (list :src (lambda (x) (list :pre (list :code x))))))
+                                                 (list :quote (lambda (x) (if (> 80 (length x)) (cons :blockqoute x) (cons :q x))))
+                                                 (list :src (lambda (x) (list :pre (cons :code x))))))

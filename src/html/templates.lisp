@@ -15,8 +15,9 @@
 
 
 (defmacro standard-page (style menu title &body body)
-  `(html5 (:html5 (:head
-                   (:title ,title)
+  `(html5 (:html5
+           (:link :href "http://fonts.googleapis.com/css?family=Oxygen" :rel "stylesheet" :type "text/css")
+           (:head (:title ,title)
                    (:meta :charset "utf-8")
                    (:style (raw ,style)))
                   (:body

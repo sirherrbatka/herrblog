@@ -7,9 +7,9 @@
 (defvar *default-menu-items* '(("blog" "Main Page")
                                ("posts" "All Posts")))
 
-(defvar *default-html* "html { font-family: 'Clear Sans'; background: #eee; }")
+(defvar *default-html* "html { font-family: 'Oxygen', sans-serif; background: #eee; }")
 
-(defvar *default-source* "code { font-family: monospace; border-style: solid; border-width: medium;}")
+(defvar *default-source* "code { font-family: monospace; border-style: solid; border-width: medium; padding: 0.250em;}")
 
 (defvar *default-body* "body {overflow: auto; background: #fff; padding: 1.250em; box-shadow: 0 0.125em 0.188em #ccc; max-width: 750em; margin: 1.875em;}")
 
